@@ -14,7 +14,6 @@ csv_file = open('prieskoniunamai.csv', 'w', encoding='utf-8', newline='')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['Pardavėjas', 'Produktas', 'Svoris', 'Kaina'])
 
-
 for url in urls:
     html_page = requests.get(url, headers=headers)
     soup = BeautifulSoup(html_page.content, 'lxml')
@@ -29,7 +28,8 @@ for url in urls:
 
             product = []
             product_title = soup.find_all('strong', class_='page-title')[0].get_text()
-            product_weight = soup.find_all(lambda tag: tag.name == "strong" and text in tag.text)[0].get_text().split()[2]
+            product_weight = soup.find_all(lambda tag: tag.name == "strong" and text in tag.text)[0].get_text().split()[
+                2]
             product_price_eur = soup.find_all('span', id='price-update')[0].get_text()
             product_price_final = product_price_eur.replace('€', '')
 
@@ -37,7 +37,6 @@ for url in urls:
             product.append(product_title)
             product.append(product_weight)
             product.append(product_price_final)
-
 
             csv_writer.writerow(product)
             print(product)

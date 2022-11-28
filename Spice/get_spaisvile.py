@@ -15,7 +15,8 @@ urls = ['https://www.spaisvile.lt/prieskoniai-daro-stebuklus/grynieji-prieskonia
         'https://www.spaisvile.lt/prieskoniai-daro-stebuklus/prieskoniu-misiniai?limit=0&orderBy=0&page=7',
         'https://www.spaisvile.lt/prieskoniai-daro-stebuklus/prieskoniu-misiniai?limit=0&orderBy=0&page=8']
 
-headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'}
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'}
 
 csv_file = open('spaisvile.csv', 'w', encoding="utf-8", newline='')
 csv_writer = csv.writer(csv_file)
@@ -33,7 +34,7 @@ for url in urls:
             product_weight_g = div_content[i].find('div', class_='shop-item-description').get_text().split()[-1:][0]
             product_weight = product_weight_g.replace('g', '')
             product_price = div_content[i].find('div', class_='shop-item-price').get_text()
-            product_price_final = product_price.split(' ', 1)[1] # remove € sign and select price only
+            product_price_final = product_price.split(' ', 1)[1]  # remove € sign and select price only
 
             product.append(f'Spaisvilė')
             product.append(product_title)

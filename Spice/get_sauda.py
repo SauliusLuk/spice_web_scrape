@@ -14,7 +14,7 @@ csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['Pardavėjas', 'Produktas', 'Svoris', 'Kaina'])
 
 for url in urls:
-    try: # sitas try yra kad sustoti prieskoniu saraso pabaigoje
+    try:  # sitas try yra kad sustoti prieskoniu saraso pabaigoje
         html_page = requests.get(url, headers=headers)
         soup = BeautifulSoup(html_page.content, 'lxml')
         content = soup.find_all('div', class_='item-info-container')
@@ -48,12 +48,13 @@ for url in urls:
                 product_price = product_price_eur.replace('€ su PVM', '').strip()
 
                 try:
-                    product_title_last_element = product_title.split()[-1:] # pasiimti tik svori (paskutinis elementas)
+                    product_title_last_element = product_title.split()[-1:]  # pasiimti tik svori (paskutinis elementas)
                     product_title_last_elem_str = product_title_last_element[0]
-                    product_weight_list = re.findall('\d', product_title_last_elem_str)  # pasalinti raides, palikti skaicius, gauti skaiciu list
+                    product_weight_list = re.findall('\d',
+                                                     product_title_last_elem_str)  # pasalinti raides, palikti skaicius, gauti skaiciu list
                     product_weight = ''.join(product_weight_list)  # sujungti list
-                    x = int(product_weight) # paverciam string i integer, kad veiktu lambda apacioje
-                    kg_to_grams = lambda kg: x*1000 if (x==1) else x # paversti kg i g
+                    x = int(product_weight)  # paverciam string i integer, kad veiktu lambda apacioje
+                    kg_to_grams = lambda kg: x * 1000 if (x == 1) else x  # paversti kg i g
                     product_weight_in_g = kg_to_grams(x)
 
                     product.append(f'Sauda')
