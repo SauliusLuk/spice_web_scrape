@@ -11,7 +11,7 @@ headers = {
 
 csv_file = open('sauda.csv', 'w', encoding="utf-8", newline='')
 csv_writer = csv.writer(csv_file)
-csv_writer.writerow(['Pardavėjas', 'Produktas', 'Kaina'])
+csv_writer.writerow(['Pardavėjas', 'Produktas', 'Svoris', 'Kaina'])
 
 for url in urls:
     try: # sitas try yra kad sustoti prieskoniu saraso pabaigoje

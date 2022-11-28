@@ -1,4 +1,4 @@
-Pardavėjas,Produktas,Kaina
+Pardavėjas,Produktas,Svoris,Kaina
 Sauda,Aštrios raudonos paprikos 40g,40,0.48
 Sauda,Aštrios raudonos paprikos maltos (ASTA40) 1kg,1000,4.30
 Sauda,Baltieji pipirai malti,1000,11.07
@@ -59,7 +59,7 @@ Sauda,"Saldžios raudonos paprikos (maltos, ASTA100) 1kg",1000,4.90
 Sauda,"Saldžios raudonos paprikos (maltos, ASTA150) 1kg",1000,5.51
 Sauda,"Saldžios raudonos paprikos (maltos, ASTA60) 1kg",1000,4.30
 Sauda,Saldžios raudonos paprikos (smulkintos 10x10) 1kg,1000,9.72
-Sauda,Saldžios raudonos paprikos 40g (maltos),,0.48
+Sauda,Saldžios raudonos paprikos 40g (maltos),40,0.48
 Sauda,Saldžios raudonos paprikos rūkytos 60g,60,1.19
 Sauda,Sezamo sėklos,1000,4.17
 Sauda,Svogūnai (griežinėliais) 1kg,1000,3.75
