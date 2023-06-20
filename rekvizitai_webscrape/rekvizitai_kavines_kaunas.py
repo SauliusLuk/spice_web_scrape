@@ -3,20 +3,20 @@ from bs4 import BeautifulSoup
 import csv
 import time
 
-base_url = "https://rekvizitai.vz.lt/imones/kavines_klubai_barai_restoranai/"
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36'
-}
+base_url = "https://rekvizitai.vz.lt/imones/kavines_klubai_barai_restoranai/kaunas/"
 
 # Create a list to store the company data
 company_data = []
 
+# Initialize the record count
+record_count = 0
+
 # Iterate over each page
-for page_num in range(1, 61):
+for page_num in range(1, 62):
     url = f"{base_url}{page_num}/"
 
-    response = requests.get(url, headers=headers)
-    html_content = response.text
+    response = requests.get(url)
+    html_content = response.content
 
     soup = BeautifulSoup(html_content, 'html.parser')
 
@@ -39,36 +39,71 @@ for page_num in range(1, 61):
         description_element = company.find('div', class_='description')
         description = description_element.text.strip() if description_element else None
 
-        # Extract additional data
-        details_block = company.find('div', class_='details-block__3')
-        darbuotojai_value = None
-        pardavimo_pajamos_value = None
-
-        if details_block:
-            darbuotojai_element = details_block.find('td', class_='name', text='Darbuotojai')
-            if darbuotojai_element:
-                darbuotojai_value = darbuotojai_element.find_next_sibling('td').text.strip()
-
-            pardavimo_pajamos_element = details_block.find('td', class_='name', text='Pardavimo pajamos')
-            if pardavimo_pajamos_element:
-                pardavimo_pajamos_value = pardavimo_pajamos_element.find_next_sibling('td').text.strip()
-
         # Extract the company info link
         company_info_link = company.find('div', class_='see-info').find('a')['href']
 
-        # Append the company data to the list
-        company_data.append([title, content, activities, description, darbuotojai_value, pardavimo_pajamos_value, company_info_link])
+        # Fetch the HTML content from the company info URL
+        response = requests.get(company_info_link)
+        html_content = response.content
 
-        print(f"Record {len(company_data)} added")
+        # Create a BeautifulSoup object for the company info URL
+        soup_company_info = BeautifulSoup(html_content, 'html.parser')
 
-        # Delay for 5 seconds between requests
+        # Initialize the values as None
+        darbuotojai_value = None
+        pardavimo_pajamos_value = None
+
+        try:
+            # Find the <td> element with class="name" containing "Darbuotojai"
+            td_element = soup_company_info.find('td', class_='name', text='Darbuotojai')
+
+            # Extract the numeric value
+            darbuotojai_value = ''.join(filter(str.isdigit, td_element.find_next_sibling('td').text))
+        except AttributeError:
+            pass
+
+        try:
+            # Find the <td> element with class="name" containing "Pardavimo pajamos"
+            td_element = soup_company_info.find('td', class_='name', text='Pardavimo pajamos')
+
+            # Find the following <td> element with class="value me-4"
+            value_td = td_element.find_next_sibling('td', class_='value me-4')
+
+            # Extract the numeric value
+            value = value_td.text.strip().split(':')[1].split('€')[0].strip()
+            pardavimo_pajamos_value = value
+        except AttributeError:
+            pass
+
+        # Increment the record count
+        record_count += 1
+
+        # Add the data to the company_data list
+        company_data.append({
+            'Title': title,
+            'Content': content,
+            'Activities': activities,
+            'Description': description,
+            'Darbuotojai': darbuotojai_value,
+            'Pardavimo pajamos': pardavimo_pajamos_value,
+            'Company Info Link': company_info_link
+        })
+
+        # Print the record count and title
+        print(f"Record {record_count} ('{title}') added.")
+
+        # Sleep for 5 seconds before making the next request
         time.sleep(5)
 
-# Write the data to a CSV file
-filename = 'rekvizitai_kavines_kaunas.csv'
-with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
-    writer = csv.writer(csvfile)
-    writer.writerow(['Title', 'Content', 'Activities', 'Description', 'Darbuotojai', 'Pardavimo pajamos', 'Company Info Link'])
+# Specify the CSV file path
+csv_file = 'rekvizitai_kavines_kaunas.csv'
+
+# Write the data to the CSV file
+with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
+    fieldnames = ['Title', 'Content', 'Activities', 'Description', 'Darbuotojai', 'Pardavimo pajamos', 'Company Info Link']
+    writer = csv.DictWriter(file, fieldnames=fieldnames)
+
+    writer.writeheader()
     writer.writerows(company_data)
 
-print(f"Data written to {filename} file.")
+print("Data extraction complete. The results have been saved to:", csv_file)
